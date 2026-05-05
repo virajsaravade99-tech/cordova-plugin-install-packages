@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="cordova-plugin-install-packages"
+        version="2.0.0"
+        xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <name>cordova-plugin-install-packages</name>
+    <description>Injects REQUEST_INSTALL_PACKAGES permission and FileProvider for APK sideloading on Android 7+</description>
+    <engines>
+        <engine name="cordova" version=">=9.0.0" />
+        <engine name="cordova-android" version=">=9.0.0" />
+    </engines>
+
+    <platform name="android">
+
+        <!-- Required on Android 8+ to allow installing APKs -->
+        <config-file parent="/manifest" target="AndroidManifest.xml"
+                     xmlns:android="http://schemas.android.com/apk/res/android">
+            <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+        </config-file>
+
+        <!-- FileProvider: serves APK from internal cache via content:// URI on Android 7+ -->
+        <config-file parent="/manifest/application" target="AndroidManifest.xml"
+                     xmlns:android="http://schemas.android.com/apk/res/android">
+            <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="${applicationId}.provider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+                <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/provider_paths" />
+            </provider>
+        </config-file>
+
+        <!-- Copy provider_paths.xml into the app res/xml directory -->
+        <resource-file src="res/xml/provider_paths.xml" target="res/xml/provider_paths.xml" />
+
+    </platform>
+
+</plugin>
